@@ -14,6 +14,7 @@ func main() {
 	config.ConnectDatabase()
 	config.DB.AutoMigrate(&models.Product{})
 	config.DB.AutoMigrate(&models.User{})
+	config.DB.AutoMigrate(&models.Cart{})
 
 	routes.RegisterRoutes(r)
 
