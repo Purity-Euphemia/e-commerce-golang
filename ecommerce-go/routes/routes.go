@@ -17,5 +17,6 @@ func RegisterRoutes(r *gin.Engine) {
 	auth.Use(middleware.AuthMiddleware())
 	{
 		auth.POST("/cart", controllers.AddToCart)
+		auth.POST("/checkout", controllers.Checkout)
 	}
 }
