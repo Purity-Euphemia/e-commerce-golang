@@ -11,7 +11,7 @@ func RegisterUser(name, email, password string) (*models.User, error) {
 	user := models.User{
 		Name:     name,
 		Email:    email,
-		Password: password, // (later we hash it)
+		Password: password,
 	}
 	err := repositories.CreateUser(&user)
 	return &user, err
