@@ -1,30 +1,19 @@
 package services
 
-type Product struct {
-	ID    int     `json:"id"`
-	Name  string  `json:"name"`
-	Price float64 `json:"price"`
+import (
+	"ecommerce-go/models"
+	"ecommerce-go/repositories"
+)
+
+func GetProducts() ([]models.Product, error) {
+	return repositories.GetAllProducts()
 }
 
-type ProductInput struct {
-	Name  string  `json:"name"`
-	Price float64 `json:"price"`
-}
-
-var products = []Product{}
-var idCounter = 1
-
-func GetAllProducts() []Product {
-	return products
-}
-
-func CreateProduct(input ProductInput) Product {
-	product := Product{
-		ID:    idCounter,
-		Name:  input.Name,
-		Price: input.Price,
+func CreateProduct(name string, price float64) (*models.Product, error) {
+	product := models.Product{
+		Name:  name,
+		Price: price,
 	}
-	idCounter++
-	products = append(products, product)
-	return product
+	err := repositories.CreateProduct(&product)
+	return &product, err
 }
