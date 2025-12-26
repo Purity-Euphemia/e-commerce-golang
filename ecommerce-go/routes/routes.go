@@ -9,9 +9,14 @@ import (
 
 func RegisterRoutes(r *gin.Engine) {
 	r.GET("/products", controllers.GetProducts)
-	r.POST("/products", controllers.CreateProduct)
 	r.POST("/register", controllers.Register)
 	r.POST("/login", controllers.Login)
+
+	admin := r.Group("/")
+	admin.Use(middleware.AuthMiddleware(), middleware.AdminOnly())
+	{
+		admin.POST("/products", controllers.CreateProduct)
+	}
 
 	auth := r.Group("/")
 	auth.Use(middleware.AuthMiddleware())
