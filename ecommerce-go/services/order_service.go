@@ -14,6 +14,11 @@ func Checkout(userID uint, total float64) (*models.Order, error) {
 		UserID: userID,
 		Total:  total,
 	}
+
 	err := repositories.CreateOrder(&order)
 	return &order, err
+}
+
+func GetOrdersByUser(userID uint) ([]models.Order, error) {
+	return repositories.GetOrdersByUser(userID)
 }
