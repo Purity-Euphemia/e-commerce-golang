@@ -17,16 +17,19 @@ func CreateProduct(name string, price float64) (*models.Product, error) {
 	err := repositories.CreateProduct(&product)
 	return &product, err
 }
-func ReduceStock(productID, qty int) error {
-	for i, p := range products {
-		if p.ID == productID {
-			if p.Stock < qty {
-				return errors.New("not enough stock")
-			}
-			products[i].Stock -= qty
-			return nil
-		}
+func ReduceStock(productID uint, qty int) error {
+	var product models.Product
+	err := config.DB.First(&product, productID).Error
+	if err != nil {
+		return err
 	}
-	return errors.New("product not found")
+
+	if product.Stock < qty {
+		return errors.New("not enough stock")
+	}
+
+	product.Stock -= qty
+	return config.DB.Save(&product).Error
 }
+
 
