@@ -6,6 +6,18 @@ import (
 )
 
 func Checkout(userID uint, total float64) (*models.Order, error) {
+	cartItems, err := repositories.GetCartItemsByUser(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, item := range cartItems {
+		err := ReduceStock(item.ProductID, item.Quantity)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	if err := ProcessPayment(total); err != nil {
 		return nil, err
 	}
@@ -14,8 +26,7 @@ func Checkout(userID uint, total float64) (*models.Order, error) {
 		UserID: userID,
 		Total:  total,
 	}
-
-	err := repositories.CreateOrder(&order)
+	err = repositories.CreateOrder(&order)
 	return &order, err
 }
 
