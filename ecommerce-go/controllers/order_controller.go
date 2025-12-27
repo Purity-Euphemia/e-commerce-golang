@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+
 	"ecommerce-go/services"
 )
 
@@ -27,4 +28,18 @@ func Checkout(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, order)
+}
+
+func GetMyOrders(c *gin.Context) {
+	userID := c.GetUint("user_id")
+
+	orders, err := services.GetOrdersByUser(userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, orders)
 }
