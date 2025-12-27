@@ -23,5 +23,6 @@ func RegisterRoutes(r *gin.Engine) {
 	{
 		auth.POST("/cart", controllers.AddToCart)
 		auth.POST("/checkout", controllers.Checkout)
+		auth.GET("/my-orders", controllers.GetMyOrders)
 	}
 }
