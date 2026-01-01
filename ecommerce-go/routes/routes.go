@@ -24,5 +24,8 @@ func RegisterRoutes(r *gin.Engine) {
 		auth.POST("/cart", controllers.AddToCart)
 		auth.POST("/checkout", controllers.Checkout)
 		auth.GET("/my-orders", controllers.GetMyOrders)
+		auth.PUT("/cart", controllers.UpdateCartItem)
+        auth.DELETE("/cart/:product_id", controllers.DeleteCartItem)
+
 	}
 }
