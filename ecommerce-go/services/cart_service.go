@@ -2,6 +2,7 @@ package services
 
 import "ecommerce-go/models"
 import "ecommerce-go/repositories"
+import "errors"
 
 func AddProductToCart(userID, productID uint, qty int) error {
 	cart := models.Cart{
