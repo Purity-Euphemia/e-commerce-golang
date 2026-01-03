@@ -1,9 +1,12 @@
 package models
 
+import "gorm.io/gorm"
+
 type OrderItem struct {
-	ID        uint `gorm:"primaryKey"`
-	OrderID   uint
-	ProductID uint
-	Quantity  int
-	Price     float64
+	gorm.Model
+	OrderID          uint
+	ProductID        uint
+	Product          Product
+	Quantity         int
+	PriceAtPurchase float64
 }
