@@ -1,7 +1,11 @@
 package models
 
+import "gorm.io/gorm"
+
 type Order struct {
-	ID     uint `gorm:"primaryKey"`
-	UserID uint
-	Total  float64
+	gorm.Model
+	UserID      uint
+	TotalAmount float64
+	Status      string
+	Items       []OrderItem
 }
