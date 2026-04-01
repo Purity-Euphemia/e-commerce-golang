@@ -1,9 +1,10 @@
 package main
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
-	"ecommerce-go/config"
+	"ecommerce-go/database"
 	"ecommerce-go/models"
 	"ecommerce-go/routes"
 )
@@ -11,13 +12,16 @@ import (
 func main() {
 	r := gin.Default()
 
-	config.ConnectDatabase()
-	config.DB.AutoMigrate(&models.Product{})
-	config.DB.AutoMigrate(&models.User{})
-	config.DB.AutoMigrate(&models.Cart{})
-	config.DB.AutoMigrate(&models.Order{})
-	config.DB.AutoMigrate(&models.OrderItem{})
+	// Add CORS middleware
+	r.Use(cors.Default())
 
+	database.ConnectDatabase()
+	database.DB.AutoMigrate(&models.Product{})
+	database.DB.AutoMigrate(&models.User{})
+	database.DB.AutoMigrate(&models.Cart{})
+	database.DB.AutoMigrate(&models.CartItem{})
+	database.DB.AutoMigrate(&models.Order{})
+	database.DB.AutoMigrate(&models.OrderItem{})
 
 	routes.RegisterRoutes(r)
 

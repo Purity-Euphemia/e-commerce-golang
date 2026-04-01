@@ -7,10 +7,10 @@ import (
 
 func AddOrderItem(orderID, productID uint, qty int, price float64) error {
 	item := models.OrderItem{
-		OrderID:   orderID,
-		ProductID: productID,
-		Quantity:  qty,
-		Price:     price,
+		OrderID:         orderID,
+		ProductID:       productID,
+		Quantity:        qty,
+		PriceAtPurchase: price,
 	}
 	return repositories.CreateOrderItem(&item)
 }

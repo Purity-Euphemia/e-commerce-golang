@@ -10,8 +10,9 @@ import (
 )
 
 type ProductInput struct {
-	Name  string  `json:"name"`
-	Price float64 `json:"price"`
+	Name  string  `json:"name" binding:"required"`
+	Price float64 `json:"price" binding:"required,gt=0"`
+	Stock int     `json:"stock" binding:"required,gte=0"`
 }
 
 func GetProducts(c *gin.Context) {
@@ -37,5 +38,8 @@ func CreateProduct(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, product)
+	c.JSON(http.StatusCreated, gin.H{
+		"success": true,
+		"data":    product,
+	})
 }

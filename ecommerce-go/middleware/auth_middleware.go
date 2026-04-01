@@ -2,13 +2,20 @@ package middleware
 
 import (
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var jwtSecret = []byte("secret-key")
+func getJWTSecret() []byte {
+	secret := os.Getenv("JWT_SECRET")
+	if secret == "" {
+		secret = "your-secret-key-change-this-in-production"
+	}
+	return []byte(secret)
+}
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -22,7 +29,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		tokenString := strings.Replace(authHeader, "Bearer ", "", 1)
 
 		token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
-			return jwtSecret, nil
+			return getJWTSecret(), nil
 		})
 
 		if err != nil || !token.Valid {

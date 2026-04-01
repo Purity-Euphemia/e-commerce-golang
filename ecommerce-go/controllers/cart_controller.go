@@ -2,62 +2,75 @@ package controllers
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
+
 	"ecommerce-go/services"
-	"strconv"
+	"ecommerce-go/utils"
 )
 
 type CartInput struct {
-	UserID    uint `json:"user_id"`
-	ProductID uint `json:"product_id"`
-	Quantity  int  `json:"quantity"`
+	ProductID uint `json:"product_id" binding:"required"`
+	Quantity  int  `json:"quantity" binding:"required,min=1"`
+}
+
+type UpdateCartInput struct {
+	ProductID uint `json:"product_id" binding:"required"`
+	Quantity  int  `json:"quantity" binding:"required,min=1"`
 }
 
 func AddToCart(c *gin.Context) {
+	userID := c.GetUint("user_id")
 	var input CartInput
+
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		utils.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	err := services.AddProductToCart(input.UserID, input.ProductID, input.Quantity)
+	err := services.AddProductToCart(userID, input.ProductID, input.Quantity)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		utils.Error(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "Product added to cart"})
+	utils.Success(c, gin.H{"message": "Product added to cart"})
 }
+
 func UpdateCartItem(c *gin.Context) {
 	userID := c.GetUint("user_id")
 
 	var input UpdateCartInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		utils.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	err := services.UpdateCart(userID, input.ProductID, input.Quantity)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		utils.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "cart updated"})
+	utils.Success(c, gin.H{"message": "cart updated"})
 }
 
 func DeleteCartItem(c *gin.Context) {
 	userID := c.GetUint("user_id")
 	productIDParam := c.Param("product_id")
 
-	productID64, _ := strconv.ParseUint(productIDParam, 10, 64)
-
-	err := services.RemoveFromCart(userID, uint(productID64))
+	productID64, err := strconv.ParseUint(productIDParam, 10, 64)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		utils.Error(c, http.StatusBadRequest, "invalid product id")
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "item removed"})
+	err = services.RemoveFromCart(userID, uint(productID64))
+	if err != nil {
+		utils.Error(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	utils.Success(c, gin.H{"message": "item removed"})
 }

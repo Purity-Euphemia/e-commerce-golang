@@ -10,54 +10,44 @@ import (
 )
 
 type RegisterInput struct {
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Name     string `json:"name" binding:"required"`
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required,min=6"`
 }
 
 type LoginInput struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required"`
 }
 
 func Register(c *gin.Context) {
 	var input RegisterInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		utils.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	user, err := services.RegisterUser(input.Name, input.Email, input.Password)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		utils.Error(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusCreated, user)
+	utils.Success(c, user)
 }
 
 func Login(c *gin.Context) {
 	var input LoginInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		utils.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	user, err := services.LoginUser(input.Email, input.Password)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, err)
+		utils.Error(c, http.StatusUnauthorized, err.Error())
 		return
 	}
 
-	token, err := utils.GenerateToken(user.ID, user.Role)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "could not generate token",
-		})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"token": token,
-	})
+	utils.Success(c, user)
 }

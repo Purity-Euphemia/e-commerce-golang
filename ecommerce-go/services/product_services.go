@@ -1,6 +1,9 @@
 package services
 
 import (
+	"errors"
+
+	"ecommerce-go/database"
 	"ecommerce-go/models"
 	"ecommerce-go/repositories"
 )
@@ -13,13 +16,15 @@ func CreateProduct(name string, price float64) (*models.Product, error) {
 	product := models.Product{
 		Name:  name,
 		Price: price,
+		Stock: 0,
 	}
 	err := repositories.CreateProduct(&product)
 	return &product, err
 }
+
 func ReduceStock(productID uint, qty int) error {
 	var product models.Product
-	err := config.DB.First(&product, productID).Error
+	err := database.DB.First(&product, productID).Error
 	if err != nil {
 		return err
 	}
@@ -29,7 +34,5 @@ func ReduceStock(productID uint, qty int) error {
 	}
 
 	product.Stock -= qty
-	return config.DB.Save(&product).Error
+	return database.DB.Save(&product).Error
 }
-
-

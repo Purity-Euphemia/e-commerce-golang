@@ -6,10 +6,11 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"ecommerce-go/services"
+	"ecommerce-go/utils"
 )
 
 type CheckoutInput struct {
-	Total float64 `json:"total"`
+	Total float64 `json:"total" binding:"required,gt=0"`
 }
 
 func Checkout(c *gin.Context) {
@@ -17,17 +18,20 @@ func Checkout(c *gin.Context) {
 
 	var input CheckoutInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		utils.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	order, err := services.Checkout(userID, input.Total)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		utils.Error(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusCreated, order)
+	c.JSON(http.StatusCreated, gin.H{
+		"success": true,
+		"data":    order,
+	})
 }
 
 func GetMyOrders(c *gin.Context) {
@@ -35,11 +39,9 @@ func GetMyOrders(c *gin.Context) {
 
 	orders, err := services.GetOrdersByUser(userID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		utils.Error(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, orders)
+	utils.Success(c, orders)
 }

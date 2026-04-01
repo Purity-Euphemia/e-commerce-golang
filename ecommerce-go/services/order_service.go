@@ -23,8 +23,9 @@ func Checkout(userID uint, total float64) (*models.Order, error) {
 	}
 
 	order := models.Order{
-		UserID: userID,
-		Total:  total,
+		UserID:      userID,
+		TotalAmount: total,
+		Status:      "pending",
 	}
 	err = repositories.CreateOrder(&order)
 	return &order, err
