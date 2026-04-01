@@ -16,12 +16,18 @@ func main() {
 	r.Use(cors.Default())
 
 	database.ConnectDatabase()
-	database.DB.AutoMigrate(&models.Product{})
+
+	// Run migrations
 	database.DB.AutoMigrate(&models.User{})
+	database.DB.AutoMigrate(&models.Category{})
+	database.DB.AutoMigrate(&models.Product{})
+	database.DB.AutoMigrate(&models.Review{})
 	database.DB.AutoMigrate(&models.Cart{})
 	database.DB.AutoMigrate(&models.CartItem{})
 	database.DB.AutoMigrate(&models.Order{})
 	database.DB.AutoMigrate(&models.OrderItem{})
+	database.DB.AutoMigrate(&models.Wishlist{})
+	database.DB.AutoMigrate(&models.Coupon{})
 
 	routes.RegisterRoutes(r)
 

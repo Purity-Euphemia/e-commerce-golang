@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"strings"
 
 	"ecommerce-go/database"
 	"ecommerce-go/models"
@@ -12,14 +13,66 @@ func GetProducts() ([]models.Product, error) {
 	return repositories.GetAllProducts()
 }
 
-func CreateProduct(name string, price float64) (*models.Product, error) {
-	product := models.Product{
-		Name:  name,
-		Price: price,
-		Stock: 0,
+func GetProductsPaginated(page, pageSize int) ([]models.Product, int64, error) {
+	return repositories.GetProductsPaginated(page, pageSize)
+}
+
+func SearchProducts(query string, page, pageSize int) ([]models.Product, int64, error) {
+	return repositories.SearchProducts(query, page, pageSize)
+}
+
+func GetProductsByCategory(categoryID uint, page, pageSize int) ([]models.Product, int64, error) {
+	return repositories.GetProductsByCategory(categoryID, page, pageSize)
+}
+
+func GetProductByID(id uint) (*models.Product, error) {
+	return repositories.GetProductByID(id)
+}
+
+func CreateProduct(name, description string, price, discountPrice float64, stock int, categoryID uint, slug, image, sku string) (*models.Product, error) {
+	if slug == "" {
+		slug = strings.ToLower(strings.ReplaceAll(name, " ", "-"))
 	}
-	err := repositories.CreateProduct(&product)
-	return &product, err
+
+	product := &models.Product{
+		Name:          name,
+		Description:   description,
+		Price:         price,
+		DiscountPrice: discountPrice,
+		Stock:         stock,
+		CategoryID:    categoryID,
+		Slug:          slug,
+		Image:         image,
+		SKU:           sku,
+	}
+
+	err := repositories.CreateProduct(product)
+	return product, err
+}
+
+func UpdateProduct(id uint, name, description string, price, discountPrice float64, stock int, categoryID uint, slug, image, sku string) (*models.Product, error) {
+	if slug == "" {
+		slug = strings.ToLower(strings.ReplaceAll(name, " ", "-"))
+	}
+
+	product := &models.Product{
+		Name:          name,
+		Description:   description,
+		Price:         price,
+		DiscountPrice: discountPrice,
+		Stock:         stock,
+		CategoryID:    categoryID,
+		Slug:          slug,
+		Image:         image,
+		SKU:           sku,
+	}
+
+	err := repositories.UpdateProduct(id, product)
+	return product, err
+}
+
+func DeleteProduct(id uint) error {
+	return repositories.DeleteProduct(id)
 }
 
 func ReduceStock(productID uint, qty int) error {

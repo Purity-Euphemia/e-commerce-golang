@@ -5,6 +5,7 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
+	"ecommerce-go/database"
 	"ecommerce-go/models"
 	"ecommerce-go/repositories"
 	"ecommerce-go/utils"
@@ -64,4 +65,25 @@ func LoginUser(email, password string) (map[string]interface{}, error) {
 		"role":  user.Role,
 		"token": token,
 	}, nil
+}
+
+func GetUserByID(id uint) (*models.User, error) {
+	var user models.User
+	err := database.DB.Where("id = ?", id).First(&user).Error
+	return &user, err
+}
+
+func UpdateUserProfile(id uint, name, phone, avatar, address, city, state, zipCode string) (*models.User, error) {
+	user := &models.User{
+		Name:    name,
+		Phone:   phone,
+		Avatar:  avatar,
+		Address: address,
+		City:    city,
+		State:   state,
+		ZipCode: zipCode,
+	}
+
+	err := database.DB.Model(&models.User{}).Where("id = ?", id).Updates(user).First(user).Error
+	return user, err
 }
