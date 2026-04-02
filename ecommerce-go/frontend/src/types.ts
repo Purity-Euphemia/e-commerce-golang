@@ -35,6 +35,14 @@ export interface CartItem {
   product: Product;
 }
 
+export interface Review {
+  id: number;
+  title?: string;
+  comment: string;
+  rating: number;
+  user_name?: string;
+}
+
 export interface Order {
   id: number;
   order_number: string;

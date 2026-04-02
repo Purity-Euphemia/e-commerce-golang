@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { CartItem, Category, LoginPayload, Order, Product, User } from './types';
+import { CartItem, Category, LoginPayload, Order, Product, Review, User } from './types';
 
 const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
@@ -57,6 +57,15 @@ export const addToCart = async (productId: number, quantity = 1) => {
 
 export const updateCart = async (productId: number, quantity: number) => {
   return client.put('/cart', { product_id: productId, quantity });
+};
+
+export const getProductReviews = async (productId: number) => {
+  const response = await client.get<{ data: Review[] }>(`/reviews/product/${productId}`);
+  return response.data.data;
+};
+
+export const addReview = async (productId: number, payload: { rating: number; title?: string; comment: string }) => {
+  return client.post(`/reviews/product/${productId}`, payload);
 };
 
 export const removeFromCart = async (productId: number) => {

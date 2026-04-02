@@ -15,7 +15,7 @@ func RegisterRoutes(r *gin.Engine) {
 	r.GET("/categories", controllers.GetAllCategories)
 	r.GET("/categories/:slug", controllers.GetCategoryBySlug)
 	r.GET("/products/category/:category_id", controllers.GetProductsByCategory)
-	r.GET("/products/:product_id/reviews", controllers.GetProductReviews)
+	r.GET("/reviews/product/:product_id", controllers.GetProductReviews)
 
 	r.POST("/register", controllers.Register)
 	r.POST("/login", controllers.Login)
@@ -62,7 +62,7 @@ func RegisterRoutes(r *gin.Engine) {
 		auth.GET("/my-wishlist", controllers.GetMyWishlist)
 
 		// Reviews
-		auth.POST("/products/:product_id/reviews", controllers.AddReview)
+		auth.POST("/reviews/product/:product_id", controllers.AddReview)
 		auth.DELETE("/reviews/:review_id", controllers.DeleteReview)
 
 		// User profile
